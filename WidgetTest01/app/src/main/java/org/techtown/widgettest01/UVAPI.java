@@ -17,16 +17,16 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * Created by 수연 on 2018-08-07.
+ * Created by 수연 on 2018-08-14.
  */
 
-public class indexAPI extends AsyncTask<Map<String, String>, Integer, String> {
+public class UVAPI extends AsyncTask<Map<String, String>, Integer, String> {
     String urlStr;
     String line;
     String longitude;
     String latitude;
 
-    public indexAPI(String urlStr, String longitude, String latitude) {
+    public UVAPI(String urlStr, String longitude, String latitude) {
         this.urlStr = urlStr;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -48,29 +48,29 @@ public class indexAPI extends AsyncTask<Map<String, String>, Integer, String> {
                 }
 
                 String result = builder.toString();
-                String index = "";
+                String comment = "";
 
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     JSONObject weather = jsonObject.getJSONObject("weather");
                     JSONObject wIndex = weather.getJSONObject("wIndex");
-                    JSONArray wctIndex  = wIndex.getJSONArray("wctIndex");
+                    JSONArray wctIndex  = wIndex.getJSONArray("uvindex");
                     JSONObject c = wctIndex.getJSONObject(0);
 
-                    JSONObject currentJSON = c.getJSONObject("current");
+                    JSONObject currentJSON = c.getJSONObject("day00");
 
-                    index = currentJSON.getString("index");
+                    comment = currentJSON.getString("comment");
 
-                    Log.d(">>>>> index", index);
+                    Log.d(">>>>> comment", comment);
                 } catch (JSONException e) {
                     Log.d("제이슨 만들기", "실패");
                     e.printStackTrace();
                 }
 
                 urlConnection.disconnect();
-                return index;
+                return comment;
             } else {
-                Log.d("index-API연결", "실패");
+                Log.d("UV-API연결", "실패");
             }
         } catch (MalformedURLException e) {
             Log.d("에러1", "MalformedURL");

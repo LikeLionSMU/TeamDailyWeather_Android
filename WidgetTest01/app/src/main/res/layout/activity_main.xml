@@ -41,7 +41,7 @@
                         <TextView
                             android:id="@+id/tc"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:text="현재온도" />
 
                         <LinearLayout
@@ -50,18 +50,31 @@
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/textView"
+                                android:id="@+id/location"
                                 android:layout_width="match_parent"
-                                android:layout_height="51dp"
+                                android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:textSize="40dp"
                                 app:layout_collapseMode="parallax" />
 
                             <TextView
                                 android:id="@+id/minNmax"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:text="최저/최고" />
+
+                            <TextView
+                                android:id="@+id/currentIndex"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="체감온도"/>
+
+                            <TextView
+                                android:id="@+id/UV"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center" />
 
                         </LinearLayout>
                     </LinearLayout>

@@ -25,12 +25,14 @@ import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
-    TextView textView;
+    TextView location;
     TextView tc;
     TextView minNmax;
+    TextView currentIndex;
+    TextView UV;
     FloatingActionButton fab_add, fab_mypage, fab_main;
-    String[] items = {"강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"};
-    String[] villages = {"삼성동", "성내1동", "수유3동", "화곡6동", "봉천동", "자양동", "구로동", "시흥동", "상계6.7동", "방학동", "용두동", "노량진2동", "성산동", "연희동", "서초2동", "행당동", "삼선동", "신천동", "신정6동", "당산동", "이태원동", "녹번동", "수송동", "광희동", "신내동"};
+    String[] items = {"강남구","강동구","강북구","강서구","관악구","광진구","구로구","금천구","노원구","도봉구","동대문구","동작구","마포구","서대문구","서초구","성동구","성북구","송파구","양천구","영등포구","용산구","은평구","종로구","중구","중랑구"};
+    String[] villages = {"삼성동","성내1동","수유3동","화곡6동","봉천동","자양동","구로동","시흥동","상계6.7동","방학동","용두동","노량진2동","성산동","연희동","서초2동","행당동","삼선동","신천동","신정6동","당산동","이태원동","녹번동","수송동","광희동","신내동"};
     int countyPosition;
 
     @Override
@@ -38,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) findViewById(R.id.textView);
+        location = (TextView) findViewById(R.id.location);
         minNmax = (TextView) findViewById(R.id.minNmax);
         tc = (TextView) findViewById(R.id.tc);
+        currentIndex = (TextView) findViewById(R.id.currentIndex);
+        UV = (TextView) findViewById(R.id.UV);
 
         fab_add = (FloatingActionButton)findViewById(R.id.fab_add);
         fab_mypage = (FloatingActionButton)findViewById(R.id.fab_mypage);
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             // 아이템 선택시 호출됨
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                textView.setText(items[position] + "  " +villages[position]);
+                location.setText(items[position] + "  " +villages[position]);
                 countyPosition = position;
 
                 String baseUrl = "https://api2.sktelecom.com/weather/current/minutely?appkey=8ab05bc6-8297-4251-bb89-e7a085516286&version=1";
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
                     longitude = tInfo[3];
                     latitude = tInfo[4];
+                    Log.d("longitude 가져옴?", longitude);
+                    Log.d("latitude 가져옴?", latitude);
                 } catch (InterruptedException e) {
                     Log.d("weatherAPI 결과1", "에러1");
                     e.printStackTrace();
@@ -85,11 +91,26 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                baseUrl = "";
-                url = baseUrl + longitude + latitude;
+                baseUrl = "https://api2.sktelecom.com/weather/index/wct?appkey=8ab05bc6-8297-4251-bb89-e7a085516286&version=1";
+                String lat = "&lat=" + latitude;
+                String lon = "&lon=" + longitude;
+                url = baseUrl + lat + lon;
                 indexAPI iAPI = new indexAPI(url, longitude, latitude);
                 try {
                     String index = iAPI.execute().get();
+                    currentIndex.setText(index);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                baseUrl = "https://api2.sktelecom.com/weather/index/uv?appkey=8ab05bc6-8297-4251-bb89-e7a085516286&version=1";
+                url = baseUrl + lat + lon;
+                UVAPI uvAPI = new UVAPI(url, longitude, latitude);
+                try{
+                    String comment = uvAPI.execute().get();
+                    UV.setText(comment);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
@@ -100,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
             // 아무것도 선택되지 않았을때 호출됨 -> 여기에 기본 설정 지역을..
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                textView.setText("");
+                location.setText("");
             }
         });
 
